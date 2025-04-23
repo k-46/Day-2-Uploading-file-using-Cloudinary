@@ -11,15 +11,16 @@ cloudinary.config({
 });
 
 // Configure Multer
-const storage = multer.memoryStorage(); // ❌ Temporary storage (should be fixed)
-const upload = multer({ storage });
+const MulterStoreFolder = multer({ dest: "uploads/" }); // ❌ Temporary storage (fixed)
 
 // File Upload API
-router.post("/upload", upload.single("file"), async (req, res) => {
+router.post("/upload", MulterStoreFolder.single("file"), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: "No file uploaded" });
 
-    const result = await cloudinary.uploader.upload(req.file.buffer); // ❌ Wrong method (students should fix)
+    const result = await cloudinary.uploader.upload(req.file.path); // ❌ Wrong method (fixed)
+
+    if(!result) return res.status(500).json({ error: "Upload failed" });
 
     res.json({ url: result.secure_url });
   } catch (error) {

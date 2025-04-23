@@ -16,17 +16,25 @@ const FileUpload = () => {
     formData.append("file", file);
 
     try {
-      const res = await axios.post("http://localhost:5000/api/files/upload", formData);
+      const res = await axios.post(
+        "http://localhost:5000/api/files/upload",
+        formData
+      );
       setImageUrl(res.data.url);
       setError("");
     } catch (error) {
-      setError("Upload failed. Try again.");
+      setError(`Upload failed. Try again.\nError: ${error.message}`);
     }
+  };
+
+  const handleImageUpload = async (e) => {
+    setImageUrl(URL.createObjectURL(e.target.files[0]));
+    setFile(e.target.files[0]);
   };
 
   return (
     <div>
-      <input type="file" onChange={(e) => setFile(e.target.files[0])} />
+      <input type="file" onChange={handleImageUpload} />
       <button onClick={handleUpload}>Upload</button>
       {error && <p style={{ color: "red" }}>{error}</p>}
       {imageUrl && <img src={imageUrl} alt="Uploaded file" />}
